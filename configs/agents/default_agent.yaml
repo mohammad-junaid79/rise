@@ -1,0 +1,26 @@
+# Default agent with OpenAI GPT-4 via LiteLLM
+agent:
+  name: "Default Agent"
+  description: "Default agent using OpenAI GPT-4 via LiteLLM"
+  agent_id: "default-001"
+  model:
+    # Reference to model catalog
+    model_ref: "gpt-4"
+    # Override specific parameters if needed
+    params:
+      temperature: 0.5  # Keep default temperature
+      max_tokens: 2048
+  system_prompt: |
+    You are a helpful assistant. Be concise but informative in your responses.
+    Provide clear and accurate information.
+  conversation_manager:
+    type: "null"
+    window_size: 20
+    should_truncate_results: false
+  tools:
+    - name: "http_request"
+      enabled: true
+  hooks: []
+  state:
+    persistent: false
+    initial_values: {}

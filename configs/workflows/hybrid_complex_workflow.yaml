@@ -1,0 +1,338 @@
+workflow_id: "hybrid_complex_workflow"
+name: "Hybrid Multi-Topology Research and Decision Workflow"
+description: "A complex workflow demonstrating mixed execution patterns: sequential phases, parallel processing, conditional branching, and dynamic routing"
+version: "1.0.0"
+topology: "graph"  # Graph topology allows for complex mixed patterns
+
+# Phase-based execution with mixed patterns
+execution_phases:
+  - phase_id: "initial_research"
+    phase_name: "Initial Research Phase"
+    execution_type: "parallel"  # Multiple researchers work simultaneously
+    nodes: ["market_researcher", "tech_researcher", "competitor_researcher"]
+    
+  - phase_id: "analysis_and_validation"
+    phase_name: "Analysis and Validation Phase" 
+    execution_type: "conditional"  # Based on research quality
+    nodes: ["data_analyst", "fact_checker", "quality_validator"]
+    depends_on: ["initial_research"]
+    
+  - phase_id: "decision_routing"
+    phase_name: "Decision and Routing Phase"
+    execution_type: "conditional"  # Route based on analysis results
+    nodes: ["decision_maker", "route_controller"]
+    depends_on: ["analysis_and_validation"]
+    
+  - phase_id: "specialized_processing"
+    phase_name: "Specialized Processing Phase"
+    execution_type: "parallel"  # Multiple specialized paths
+    nodes: ["financial_analyst", "risk_assessor", "strategy_planner"]
+    depends_on: ["decision_routing"]
+    conditional: true  # Only execute if routed here
+    
+  - phase_id: "alternative_processing"
+    phase_name: "Alternative Processing Phase"
+    execution_type: "sequential"  # Alternative path
+    nodes: ["alternative_analyst", "backup_validator"]
+    depends_on: ["decision_routing"]
+    conditional: true  # Only execute if routed here
+    
+  - phase_id: "final_synthesis"
+    phase_name: "Final Synthesis Phase"
+    execution_type: "sequential"  # Final sequential processing
+    nodes: ["synthesizer", "final_reviewer", "report_generator"]
+    depends_on: ["specialized_processing", "alternative_processing"]
+    wait_for: "any"  # Wait for any of the previous phases
+
+nodes:
+  # PARALLEL INITIAL RESEARCH PHASE
+  - node_id: "market_researcher"
+    name: "Market Research Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a market research specialist. Research market trends, customer needs, and market opportunities for the given topic."
+    priority: 100
+    timeout: 300
+    context_keys: ["market_data", "market_trends"]
+    execution_group: "initial_research"
+    
+  - node_id: "tech_researcher" 
+    name: "Technology Research Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a technology research specialist. Research technical feasibility, technological trends, and implementation challenges."
+    priority: 100
+    timeout: 300
+    context_keys: ["tech_data", "tech_feasibility"]
+    execution_group: "initial_research"
+    
+  - node_id: "competitor_researcher"
+    name: "Competitive Research Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a competitive intelligence specialist. Research competitors, their strategies, strengths, and weaknesses."
+    priority: 100
+    timeout: 300
+    context_keys: ["competitor_data", "competitive_landscape"]
+    execution_group: "initial_research"
+
+  # CONDITIONAL ANALYSIS PHASE
+  - node_id: "data_analyst"
+    name: "Data Analysis Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a data analyst. Analyze the research data for insights, patterns, and quality assessment. Rate data quality from 1-10."
+    priority: 90
+    timeout: 240
+    context_keys: ["analysis_results", "data_quality_score"]
+    dependencies: ["market_researcher", "tech_researcher", "competitor_researcher"]
+    
+  - node_id: "fact_checker"
+    name: "Fact Validation Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent" 
+    system_prompt: "You are a fact-checking specialist. Validate the accuracy of research findings and flag any inconsistencies."
+    priority: 85
+    timeout: 180
+    context_keys: ["validation_results", "accuracy_score"]
+    dependencies: ["data_analyst"]
+    
+  - node_id: "quality_validator"
+    name: "Quality Assessment Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a quality assessment specialist. Evaluate overall research quality and determine if additional research is needed."
+    priority: 80
+    timeout: 120
+    context_keys: ["quality_assessment", "research_completeness"]
+    dependencies: ["fact_checker"]
+
+  # DECISION AND ROUTING
+  - node_id: "decision_maker"
+    name: "Strategic Decision Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a strategic decision maker. Based on research quality and findings, decide the best analysis approach: 'comprehensive' for high-quality data or 'alternative' for low-quality data."
+    priority: 75
+    timeout: 180
+    context_keys: ["strategic_decision", "analysis_route"]
+    dependencies: ["quality_validator"]
+    
+  - node_id: "route_controller"
+    name: "Workflow Router"
+    type: "function"
+    function_name: "route_workflow"
+    function_params:
+      criteria:
+        min_quality: 0.7
+        decision_key: "strategic_decision"
+      route_options: ["comprehensive_analysis", "alternative_analysis"]
+    dependencies: ["decision_maker"]
+
+  # COMPREHENSIVE ANALYSIS PATH (PARALLEL)
+  - node_id: "financial_analyst"
+    name: "Financial Analysis Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a financial analyst. Perform detailed financial analysis including costs, revenues, ROI, and financial risks."
+    priority: 70
+    timeout: 300
+    context_keys: ["financial_analysis", "financial_projections"]
+    dependencies: ["route_controller"]
+    conditional_execution: "comprehensive"
+    execution_group: "comprehensive_analysis"
+    
+  - node_id: "risk_assessor"
+    name: "Risk Assessment Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a risk management specialist. Assess business risks, technical risks, and mitigation strategies."
+    priority: 70
+    timeout: 300
+    context_keys: ["risk_assessment", "mitigation_strategies"]
+    dependencies: ["route_controller"]
+    conditional_execution: "comprehensive"
+    execution_group: "comprehensive_analysis"
+    
+  - node_id: "strategy_planner"
+    name: "Strategic Planning Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a strategic planning expert. Develop comprehensive implementation strategies and roadmaps."
+    priority: 70
+    timeout: 300
+    context_keys: ["strategy_plan", "implementation_roadmap"]
+    dependencies: ["route_controller"]
+    conditional_execution: "comprehensive"
+    execution_group: "comprehensive_analysis"
+
+  # ALTERNATIVE ANALYSIS PATH (SEQUENTIAL)
+  - node_id: "alternative_analyst"
+    name: "Alternative Analysis Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are an alternative analysis specialist. Perform streamlined analysis when data quality is insufficient."
+    priority: 65
+    timeout: 180
+    context_keys: ["alternative_analysis", "simplified_insights"]
+    dependencies: ["route_controller"]
+    conditional_execution: "alternative"
+    
+  - node_id: "backup_validator"
+    name: "Backup Validation Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a backup validator. Validate alternative analysis and provide confidence assessment."
+    priority: 60
+    timeout: 120
+    context_keys: ["backup_validation", "confidence_level"]
+    dependencies: ["alternative_analyst"]
+    conditional_execution: "alternative"
+
+  # FINAL SYNTHESIS (SEQUENTIAL)
+  - node_id: "synthesizer"
+    name: "Data Synthesis Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a synthesis specialist. Combine all analysis results into coherent insights and recommendations."
+    priority: 55
+    timeout: 240
+    context_keys: ["synthesis_results", "final_insights"]
+    dependencies: ["financial_analyst", "risk_assessor", "strategy_planner", "backup_validator"]
+    dependency_mode: "any_path"  # Wait for either comprehensive OR alternative path
+    
+  - node_id: "final_reviewer"
+    name: "Final Review Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a final reviewer. Review synthesis results for completeness, accuracy, and actionability."
+    priority: 50
+    timeout: 180
+    context_keys: ["final_review", "review_status"]
+    dependencies: ["synthesizer"]
+    
+  - node_id: "report_generator"
+    name: "Report Generation Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a report writing expert. Create a comprehensive final report with findings, insights, and recommendations."
+    priority: 45
+    timeout: 300
+    context_keys: ["final_report"]
+    dependencies: ["final_reviewer"]
+
+# Complex edge definitions for conditional routing
+edges:
+  # Initial research (parallel) → Analysis
+  - from_node: "market_researcher"
+    to_node: "data_analyst"
+  - from_node: "tech_researcher"
+    to_node: "data_analyst"
+  - from_node: "competitor_researcher"
+    to_node: "data_analyst"
+    
+  # Analysis chain
+  - from_node: "data_analyst"
+    to_node: "fact_checker"
+  - from_node: "fact_checker"
+    to_node: "quality_validator"
+    
+  # Decision routing
+  - from_node: "quality_validator"
+    to_node: "decision_maker"
+  - from_node: "decision_maker"
+    to_node: "route_controller"
+    
+  # Comprehensive path (conditional)
+  - from_node: "route_controller"
+    to_node: "financial_analyst"
+    condition: "context.get('analysis_route') == 'comprehensive'"
+  - from_node: "route_controller"
+    to_node: "risk_assessor"
+    condition: "context.get('analysis_route') == 'comprehensive'"
+  - from_node: "route_controller"
+    to_node: "strategy_planner"
+    condition: "context.get('analysis_route') == 'comprehensive'"
+    
+  # Alternative path (conditional)
+  - from_node: "route_controller"
+    to_node: "alternative_analyst"
+    condition: "context.get('analysis_route') == 'alternative'"
+  - from_node: "alternative_analyst"
+    to_node: "backup_validator"
+    condition: "context.get('analysis_route') == 'alternative'"
+    
+  # Final synthesis (either path)
+  - from_node: "financial_analyst"
+    to_node: "synthesizer"
+  - from_node: "risk_assessor"
+    to_node: "synthesizer"
+  - from_node: "strategy_planner"
+    to_node: "synthesizer"
+  - from_node: "backup_validator"
+    to_node: "synthesizer"
+    
+  # Final sequential chain
+  - from_node: "synthesizer"
+    to_node: "final_reviewer"
+  - from_node: "final_reviewer"
+    to_node: "report_generator"
+
+# Entry and exit points
+entry_points: ["market_researcher", "tech_researcher", "competitor_researcher"]
+exit_points: ["report_generator"]
+
+# Communication patterns for mixed execution
+communication:
+  - pattern: "broadcast"
+    source_nodes: ["data_analyst"]
+    target_nodes: ["fact_checker", "quality_validator"]
+    message_template: "Analysis results: {analysis_results}"
+    
+  - pattern: "conditional"
+    source_nodes: ["route_controller"]
+    target_nodes: ["financial_analyst", "risk_assessor", "strategy_planner"]
+    condition: "comprehensive"
+    message_template: "Comprehensive analysis required: {analysis_route}"
+    
+  - pattern: "conditional"
+    source_nodes: ["route_controller"]
+    target_nodes: ["alternative_analyst"]
+    condition: "alternative"
+    message_template: "Alternative analysis required: {analysis_route}"
+    
+  - pattern: "aggregation"
+    source_nodes: ["financial_analyst", "risk_assessor", "strategy_planner", "backup_validator"]
+    target_nodes: ["synthesizer"]
+    message_template: "Analysis complete. Results: {combined_results}"
+
+# Context management for complex workflow
+context:
+  shared_keys: ["topic", "original_query", "workflow_phase", "analysis_route", "execution_path"]
+  node_specific_keys:
+    market_researcher: ["market_data", "market_trends"]
+    tech_researcher: ["tech_data", "tech_feasibility"]
+    competitor_researcher: ["competitor_data", "competitive_landscape"]
+    data_analyst: ["analysis_results", "data_quality_score"]
+    decision_maker: ["strategic_decision", "analysis_route"]
+    financial_analyst: ["financial_analysis", "financial_projections"]
+    risk_assessor: ["risk_assessment", "mitigation_strategies"]
+    strategy_planner: ["strategy_plan", "implementation_roadmap"]
+    alternative_analyst: ["alternative_analysis", "simplified_insights"]
+    synthesizer: ["synthesis_results", "final_insights"]
+    report_generator: ["final_report"]
+  persistence: true
+  isolation_level: "workflow"
+
+# Complex execution settings
+max_execution_time: 3600  # 1 hour for complex workflow
+error_handling: "continue"  # Continue execution even if some nodes fail
+retry_policy:
+  max_retries: 2
+  retry_delay: 30
+  retry_on_timeout: true
+
+# Workflow metadata
+tags: ["hybrid", "complex", "multi-topology", "conditional", "parallel", "sequential", "decision-based"]
+created_at: "2025-01-01T00:00:00Z"
+updated_at: "2025-01-01T00:00:00Z"

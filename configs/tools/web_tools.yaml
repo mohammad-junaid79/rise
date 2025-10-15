@@ -1,0 +1,9 @@
+tools:
+  http_request:
+    description: "Make HTTP requests to external APIs"
+    parameters:
+      timeout: 30
+      max_retries: 3
+      allowed_domains:
+        - "*.wikipedia.org"
+        - "*.github.com"

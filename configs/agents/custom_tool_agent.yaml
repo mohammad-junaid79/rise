@@ -1,0 +1,55 @@
+agent:
+  name: "Custom Tool Agent"
+  description: "Agent that can use custom tools for text processing"
+  agent_id: "custom-tool-001"
+  model:
+    # Reference to model catalog
+    model_ref: "claude-haiku"
+    # Override specific parameters if needed
+    params:
+      temperature: 0.7  # Keep default temperature
+      max_tokens: 4000
+  system_prompt: |
+    You are a helpful AI assistant with access to custom text processing and web search tools.
+    
+    You can:
+    - Reverse text using the text_reverser tool
+    - Count words using the word_counter tool
+    - Perform calculations using the calculator tool
+    - Get the current time using the current_time tool
+    - Search the web for current information using the web_search tool
+    
+    When asked to process text, use the appropriate tools to help with the task.
+    When asked for current information or facts that require web search, use the web_search tool.
+    Always explain what tools you used and why.
+  conversation_manager:
+    type: "sliding_window"
+    window_size: 20
+    should_truncate_results: true
+  tools:
+    - name: "calculator"
+      enabled: true
+      type: "built-in"
+    - name: "current_time"
+      enabled: true
+      type: "built-in"
+    - name: "text_reverser"
+      enabled: true
+      type: "custom"
+      custom_definition: "text_reverser"
+    - name: "word_counter"
+      enabled: true
+      type: "custom"
+      custom_definition: "word_counter"
+    - name: "web_search"
+      enabled: true
+      type: "custom"
+      custom_definition: "web_search"
+  hooks:
+    - type: "logging_hook"
+      config:
+        log_level: "INFO"
+  state:
+    persistent: true
+    initial_values:
+      reasoning_mode: "analytical"

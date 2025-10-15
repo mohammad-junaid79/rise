@@ -1,0 +1,131 @@
+custom_tools:
+  text_analyzer:
+    description: "Analyze text for various metrics and insights"
+    type: "custom"
+    function_file: "text_analysis_functions.py"
+    function_name: "text_analyzer"
+    parameters:
+      text:
+        type: "string"
+        description: "Text to analyze"
+        required: true
+      analysis_type:
+        type: "string"
+        description: "Type of analysis to perform"
+        required: false
+        default: "summary"
+        enum: ["summary", "word_frequency", "readability"]
+    allowed_imports: ["re", "collections"]
+    version: "1.0.0"
+    author: "Riselogic AI"
+    tags: ["text", "analysis", "nlp"]
+
+  url_analyzer:
+    description: "Analyze URLs for structure, security, and parameters"
+    type: "custom"
+    function_file: "text_analysis_functions.py"
+    function_name: "url_analyzer"
+    parameters:
+      url:
+        type: "string"
+        description: "URL to analyze"
+        required: true
+      analysis_type:
+        type: "string"
+        description: "Type of analysis to perform"
+        required: false
+        default: "basic"
+        enum: ["basic", "security", "params"]
+    allowed_imports: ["re", "urllib.parse"]
+    version: "1.0.0"
+    author: "Riselogic AI"
+    tags: ["url", "security", "analysis", "web"]
+
+  file_manager:
+    description: "Basic file operations tool"
+    type: "custom"
+    function_code: |
+      def file_manager(operation, file_path, content=None, **kwargs):
+          """
+          Perform basic file operations
+          
+          Args:
+              operation (str): Operation to perform
+              file_path (str): Path to the file
+              content (str): Content for write operations
+          
+          Returns:
+              str: Operation result
+          """
+          import os
+          
+          try:
+              if operation == "read":
+                  if os.path.exists(file_path):
+                      with open(file_path, 'r', encoding='utf-8') as f:
+                          return f.read()
+                  else:
+                      return f"File not found: {file_path}"
+              
+              elif operation == "write":
+                  if content is None:
+                      return "Content is required for write operation"
+                  
+                  # Create directory if it doesn't exist
+                  directory = os.path.dirname(file_path)
+                  if directory and not os.path.exists(directory):
+                      os.makedirs(directory)
+                  
+                  with open(file_path, 'w', encoding='utf-8') as f:
+                      f.write(content)
+                  return f"Successfully wrote to {file_path}"
+              
+              elif operation == "append":
+                  if content is None:
+                      return "Content is required for append operation"
+                  
+                  with open(file_path, 'a', encoding='utf-8') as f:
+                      f.write(content)
+                  return f"Successfully appended to {file_path}"
+              
+              elif operation == "list":
+                  if os.path.isdir(file_path):
+                      items = os.listdir(file_path)
+                      return f"Contents of {file_path}:\n" + "\n".join(f"- {item}" for item in sorted(items))
+                  else:
+                      return f"Directory not found: {file_path}"
+              
+              elif operation == "exists":
+                  return f"File {'exists' if os.path.exists(file_path) else 'does not exist'}: {file_path}"
+              
+              elif operation == "size":
+                  if os.path.exists(file_path):
+                      size = os.path.getsize(file_path)
+                      return f"Size of {file_path}: {size} bytes"
+                  else:
+                      return f"File not found: {file_path}"
+              
+              else:
+                  return f"Unknown operation: {operation}"
+                  
+          except Exception as e:
+              return f"Error performing {operation}: {str(e)}"
+    function_name: "file_manager"
+    parameters:
+      operation:
+        type: "string"
+        description: "File operation to perform"
+        required: true
+        enum: ["read", "write", "append", "list", "exists", "size"]
+      file_path:
+        type: "string"
+        description: "Path to the file or directory"
+        required: true
+      content:
+        type: "string"
+        description: "Content for write/append operations"
+        required: false
+    allowed_imports: ["os"]
+    version: "1.0.0"
+    author: "Riselogic AI"
+    tags: ["file", "io", "filesystem"]

@@ -1,0 +1,6 @@
+tools:
+  file_search:
+    description: "Search through uploaded files"
+    parameters:
+      max_file_size: "10MB"
+      supported_formats: ["txt", "pdf", "docx"]

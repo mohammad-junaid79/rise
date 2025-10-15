@@ -1,0 +1,108 @@
+workflow_id: "swarm_creative_collaboration_workflow"
+name: "Swarm Creative Collaboration Workflow"
+description: "A swarm-based workflow for collaborative creative projects with autonomous agent coordination"
+version: "1.0.0"
+topology: "swarm"
+
+nodes:
+  - node_id: "creative_director"
+    name: "Creative Director"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a creative director. Guide the creative process, set vision and direction, and coordinate with other creative specialists. You can hand off to other agents when you need specialized creative input."
+    timeout: 300
+    context_keys: ["creative_vision", "project_direction"]
+    
+  - node_id: "copywriter"
+    name: "Copywriter"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a creative copywriter. Write compelling copy, headlines, and marketing messages. You can collaborate with other creative agents and hand off when design or strategy input is needed."
+    timeout: 240
+    context_keys: ["copy_content", "messaging"]
+    
+  - node_id: "visual_designer"
+    name: "Visual Designer"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a visual designer. Create visual concepts, design layouts, and provide artistic direction. You can collaborate with copywriters and hand off to other specialists when needed."
+    timeout: 300
+    context_keys: ["visual_concepts", "design_elements"]
+    
+  - node_id: "brand_strategist"
+    name: "Brand Strategist"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a brand strategist. Research market trends, analyze brand positioning, and provide strategic insights using web research. You can hand off to creative specialists for execution."
+    timeout: 240
+    context_keys: ["brand_strategy", "market_insights"]
+    
+  - node_id: "ux_designer"
+    name: "UX Designer"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a UX designer. Focus on user experience, interaction design, and usability. You can collaborate with visual designers and hand off when content or strategy input is needed."
+    timeout: 300
+    context_keys: ["ux_design", "user_flow"]
+    
+  - node_id: "content_strategist"
+    name: "Content Strategist"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a content strategist. Plan content architecture, develop content frameworks, and ensure content aligns with brand strategy. You can hand off to copywriters and designers for execution."
+    timeout: 240
+    context_keys: ["content_strategy", "content_framework"]
+
+communication:
+  - pattern: "broadcast"
+    source_nodes: ["creative_director"]
+    target_nodes: ["copywriter", "visual_designer", "brand_strategist", "ux_designer", "content_strategist"]
+    message_template: "Creative vision: {creative_vision}. Project direction: {project_direction}"
+    
+  - pattern: "direct"
+    source_nodes: ["brand_strategist"]
+    target_nodes: ["content_strategist", "copywriter"]
+    message_template: "Brand strategy insights: {brand_strategy}. Market insights: {market_insights}"
+    
+  - pattern: "direct"
+    source_nodes: ["content_strategist"]
+    target_nodes: ["copywriter", "visual_designer"]
+    message_template: "Content strategy: {content_strategy}. Content framework: {content_framework}"
+    
+  - pattern: "direct"
+    source_nodes: ["copywriter"]
+    target_nodes: ["visual_designer", "ux_designer"]
+    message_template: "Copy content: {copy_content}. Messaging: {messaging}"
+    
+  - pattern: "direct"
+    source_nodes: ["visual_designer"]
+    target_nodes: ["ux_designer"]
+    message_template: "Visual concepts: {visual_concepts}. Design elements: {design_elements}"
+
+context:
+  shared_keys: ["project_brief", "target_audience", "brand_guidelines", "creative_objectives"]
+  node_specific_keys:
+    creative_director: ["creative_vision", "project_direction"]
+    copywriter: ["copy_content", "messaging"]
+    visual_designer: ["visual_concepts", "design_elements"]
+    brand_strategist: ["brand_strategy", "market_insights"]
+    ux_designer: ["ux_design", "user_flow"]
+    content_strategist: ["content_strategy", "content_framework"]
+  persistence: true
+  isolation_level: "workflow"
+
+# Swarm-specific configuration
+swarm_config:
+  max_handoffs: 25
+  max_iterations: 30
+  execution_timeout: 1800
+  node_timeout: 300
+  repetitive_handoff_detection_window: 8
+  repetitive_handoff_min_unique_agents: 3
+
+max_execution_time: 2400
+error_handling: "continue"
+
+tags: ["creative", "swarm", "collaborative", "autonomous"]
+created_at: "2025-01-01T00:00:00Z"
+updated_at: "2025-01-01T00:00:00Z"

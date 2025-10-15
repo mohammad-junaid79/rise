@@ -1,0 +1,167 @@
+workflow_id: "graph_software_development_workflow"
+name: "Graph-based Software Development Workflow"
+description: "A graph-based workflow for software development with conditional branching and complex dependencies"
+version: "1.0.0"
+topology: "graph"
+
+nodes:
+  - node_id: "requirements_analyst"
+    name: "Requirements Analysis Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a requirements analysis expert. Analyze and document software requirements, identify complexity level and technology needs."
+    timeout: 300
+    context_keys: ["requirements", "complexity_level", "tech_stack"]
+    
+  - node_id: "architect"
+    name: "Software Architect"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a software architect. Design system architecture, define components, and create technical specifications."
+    timeout: 400
+    context_keys: ["architecture", "components", "specifications"]
+    
+  - node_id: "researcher"
+    name: "Technology Research Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a technology research specialist. Research latest technologies, frameworks, and best practices using web search."
+    timeout: 240
+    context_keys: ["tech_research", "recommendations"]
+    
+  - node_id: "frontend_developer"
+    name: "Frontend Developer"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a frontend developer. Create user interfaces, implement frontend logic, and ensure responsive design."
+    timeout: 600
+    context_keys: ["frontend_code", "ui_components"]
+    
+  - node_id: "backend_developer"
+    name: "Backend Developer"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a backend developer. Implement server-side logic, APIs, databases, and system integrations."
+    timeout: 600
+    context_keys: ["backend_code", "api_specs"]
+    
+  - node_id: "security_specialist"
+    name: "Security Specialist"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a security specialist. Review code for security vulnerabilities and implement security best practices."
+    timeout: 300
+    context_keys: ["security_review", "security_recommendations"]
+    
+  - node_id: "code_reviewer"
+    name: "Code Review Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a senior code reviewer. Review code quality, performance, maintainability, and adherence to best practices."
+    timeout: 360
+    context_keys: ["code_review", "improvement_suggestions"]
+    
+  - node_id: "integrator"
+    name: "Integration Specialist"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are an integration specialist. Combine frontend and backend components, resolve integration issues, and ensure system cohesion."
+    timeout: 300
+    context_keys: ["integration_plan", "final_system"]
+
+edges:
+  - from_node: "requirements_analyst"
+    to_node: "architect"
+    communication_pattern: "direct"
+    
+  - from_node: "requirements_analyst"
+    to_node: "researcher"
+    communication_pattern: "direct"
+    condition: "complexity_level == 'high'"
+    
+  - from_node: "architect"
+    to_node: "frontend_developer"
+    communication_pattern: "direct"
+    
+  - from_node: "architect"
+    to_node: "backend_developer"
+    communication_pattern: "direct"
+    
+  - from_node: "researcher"
+    to_node: "frontend_developer"
+    communication_pattern: "direct"
+    condition: "tech_research != None"
+    
+  - from_node: "researcher"
+    to_node: "backend_developer"
+    communication_pattern: "direct"
+    condition: "tech_research != None"
+    
+  - from_node: "frontend_developer"
+    to_node: "security_specialist"
+    communication_pattern: "direct"
+    
+  - from_node: "backend_developer"
+    to_node: "security_specialist"
+    communication_pattern: "direct"
+    
+  - from_node: "frontend_developer"
+    to_node: "code_reviewer"
+    communication_pattern: "direct"
+    
+  - from_node: "backend_developer"
+    to_node: "code_reviewer"
+    communication_pattern: "direct"
+    
+  - from_node: "security_specialist"
+    to_node: "integrator"
+    communication_pattern: "direct"
+    
+  - from_node: "code_reviewer"
+    to_node: "integrator"
+    communication_pattern: "direct"
+
+entry_points: ["requirements_analyst"]
+
+communication:
+  - pattern: "direct"
+    source_nodes: ["requirements_analyst"]
+    target_nodes: ["architect"]
+    message_template: "Requirements: {requirements}. Complexity: {complexity_level}. Tech Stack: {tech_stack}"
+    
+  - pattern: "conditional"
+    source_nodes: ["requirements_analyst"]
+    target_nodes: ["researcher"]
+    condition: "complexity_level == 'high'"
+    message_template: "High complexity project detected. Research needed for: {tech_stack}"
+    
+  - pattern: "broadcast"
+    source_nodes: ["architect"]
+    target_nodes: ["frontend_developer", "backend_developer"]
+    message_template: "Architecture: {architecture}. Components: {components}. Specifications: {specifications}"
+    
+  - pattern: "aggregation"
+    source_nodes: ["security_specialist", "code_reviewer"]
+    target_nodes: ["integrator"]
+    message_template: "Quality assurance complete. Security review: {security_review}. Code review: {code_review}"
+
+context:
+  shared_keys: ["project_name", "requirements", "tech_stack", "timeline"]
+  node_specific_keys:
+    requirements_analyst: ["requirements", "complexity_level", "tech_stack"]
+    architect: ["architecture", "components", "specifications"]
+    researcher: ["tech_research", "recommendations"]
+    frontend_developer: ["frontend_code", "ui_components"]
+    backend_developer: ["backend_code", "api_specs"]
+    security_specialist: ["security_review", "security_recommendations"]
+    code_reviewer: ["code_review", "improvement_suggestions"]
+    integrator: ["integration_plan", "final_system"]
+  persistence: true
+  isolation_level: "workflow"
+
+max_execution_time: 3600
+error_handling: "retry"
+
+tags: ["software-development", "graph", "conditional", "enterprise"]
+created_at: "2025-01-01T00:00:00Z"
+updated_at: "2025-01-01T00:00:00Z"

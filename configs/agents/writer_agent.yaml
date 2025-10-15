@@ -1,0 +1,19 @@
+agent:
+  agent_id: writer_agent-fdb08fab
+  conversation_manager:
+    should_truncate_results: true
+    type: sliding_window
+    window_size: 40
+  description: Professional writing agent
+  hooks: []
+  model:
+    model_ref: gpt-4
+    params:
+      max_tokens: 2000
+      temperature: 0.7
+  name: Writer Agent
+  state:
+    initial_values: {}
+    persistent: false
+  system_prompt: You are a professional writer
+  tools: []

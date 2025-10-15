@@ -1,0 +1,39 @@
+workflow_id: workflow-1757874378435
+name: Single Research Agent Flow
+description: Single Research Agent Flow
+version: 1.0.0
+topology: sequential
+nodes:
+- node_id: agent-1757874312937
+  name: research_agent
+  type: agent
+  agent_config: research_agent
+  system_prompt: null
+  function_name: null
+  function_params: null
+  condition_expression: null
+  timeout: 300
+  retry_count: 0
+  priority: 0
+  input_mapping: null
+  output_mapping: null
+  context_keys: null
+edges: []
+entry_points: null
+communication: []
+context:
+  shared_keys:
+  - workflow_input
+  - workflow_context
+  node_specific_keys:
+    agent-1757874312937:
+    - agent-1757874312937_output
+    - agent-1757874312937_context
+  persistence: true
+  isolation_level: workflow
+parallel_config: null
+max_execution_time: 1800
+error_handling: stop
+tags: []
+created_at: 2025-09-14 11:26:18.439584
+updated_at: 2025-09-14 12:06:15.467667

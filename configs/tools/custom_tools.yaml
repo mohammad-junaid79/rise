@@ -1,0 +1,319 @@
+custom_tools:
+  string_manipulation:
+    description: "Perform various string manipulation operations"
+    type: "custom"
+    function_code: |
+      def string_manipulation(text, operation, **kwargs):
+          """
+          Perform string manipulation operations
+          
+          Args:
+              text (str): The input text
+              operation (str): The operation to perform
+              **kwargs: Additional parameters based on operation
+          
+          Returns:
+              str: The manipulated string
+          """
+          if operation == "uppercase":
+              return text.upper()
+          elif operation == "lowercase":
+              return text.lower()
+          elif operation == "title":
+              return text.title()
+          elif operation == "reverse":
+              return text[::-1]
+          elif operation == "replace":
+              old = kwargs.get("old_text", "")
+              new = kwargs.get("new_text", "")
+              return text.replace(old, new)
+          elif operation == "count_words":
+              return str(len(text.split()))
+          elif operation == "count_chars":
+              return str(len(text))
+          elif operation == "extract_emails":
+              import re
+              pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+              emails = re.findall(pattern, text)
+              return ", ".join(emails)
+          else:
+              return f"Unknown operation: {operation}"
+    function_name: "string_manipulation"
+    parameters:
+      text:
+        type: "string"
+        description: "The input text to manipulate"
+        required: true
+      operation:
+        type: "string"
+        description: "The operation to perform"
+        required: true
+        enum: ["uppercase", "lowercase", "title", "reverse", "replace", "count_words", "count_chars", "extract_emails"]
+      old_text:
+        type: "string"
+        description: "Text to replace (for replace operation)"
+        required: false
+      new_text:
+        type: "string"
+        description: "Replacement text (for replace operation)"
+        required: false
+    allowed_imports: ["re"]
+    version: "1.0.0"
+    author: "Riselogic AI"
+    tags: ["text", "string", "manipulation"]
+
+  math_calculator:
+    description: "Perform advanced mathematical calculations"
+    type: "custom"
+    function_code: |
+      def math_calculator(expression, operation_type="evaluate"):
+          """
+          Perform mathematical calculations
+          
+          Args:
+              expression (str): Mathematical expression or values
+              operation_type (str): Type of operation
+          
+          Returns:
+              str: Calculation result
+          """
+          import math
+          
+          if operation_type == "evaluate":
+              try:
+                  # Safe evaluation of mathematical expressions
+                  allowed_names = {
+                      k: v for k, v in math.__dict__.items() 
+                      if not k.startswith("__")
+                  }
+                  allowed_names.update({
+                      "abs": abs, "max": max, "min": min, "round": round,
+                      "sum": sum, "pow": pow
+                  })
+                  
+                  result = eval(expression, {"__builtins__": {}}, allowed_names)
+                  return str(result)
+              except Exception as e:
+                  return f"Error evaluating expression: {str(e)}"
+          
+          elif operation_type == "factorial":
+              try:
+                  n = int(float(expression))
+                  return str(math.factorial(n))
+              except Exception as e:
+                  return f"Error calculating factorial: {str(e)}"
+          
+          elif operation_type == "fibonacci":
+              try:
+                  n = int(float(expression))
+                  if n <= 0:
+                      return "0"
+                  elif n == 1:
+                      return "1"
+                  else:
+                      a, b = 0, 1
+                      for _ in range(2, n + 1):
+                          a, b = b, a + b
+                      return str(b)
+              except Exception as e:
+                  return f"Error calculating fibonacci: {str(e)}"
+          
+          else:
+              return f"Unknown operation type: {operation_type}"
+    function_name: "math_calculator"
+    parameters:
+      expression:
+        type: "string"
+        description: "Mathematical expression or numeric value"
+        required: true
+      operation_type:
+        type: "string"
+        description: "Type of mathematical operation"
+        required: false
+        default: "evaluate"
+        enum: ["evaluate", "factorial", "fibonacci"]
+    allowed_imports: ["math"]
+    version: "1.0.0"
+    author: "Riselogic AI"
+    tags: ["math", "calculator", "computation"]
+
+  data_formatter:
+    description: "Format and convert data between different formats"
+    type: "custom"
+    function_code: |
+      def data_formatter(data, input_format, output_format, **kwargs):
+          """
+          Format and convert data between different formats
+          
+          Args:
+              data (str): Input data
+              input_format (str): Format of input data
+              output_format (str): Desired output format
+          
+          Returns:
+              str: Formatted data
+          """
+          import json
+          import yaml
+          
+          try:
+              # Parse input data
+              if input_format == "json":
+                  parsed_data = json.loads(data)
+              elif input_format == "yaml":
+                  parsed_data = yaml.safe_load(data)
+              elif input_format == "csv":
+                  lines = data.strip().split('\n')
+                  header = lines[0].split(',')
+                  parsed_data = []
+                  for line in lines[1:]:
+                      values = line.split(',')
+                      parsed_data.append(dict(zip(header, values)))
+              else:
+                  return f"Unsupported input format: {input_format}"
+              
+              # Convert to output format
+              if output_format == "json":
+                  return json.dumps(parsed_data, indent=2)
+              elif output_format == "yaml":
+                  return yaml.dump(parsed_data, default_flow_style=False)
+              elif output_format == "csv":
+                  if isinstance(parsed_data, list) and len(parsed_data) > 0:
+                      if isinstance(parsed_data[0], dict):
+                          header = list(parsed_data[0].keys())
+                          csv_lines = [','.join(header)]
+                          for item in parsed_data:
+                              csv_lines.append(','.join(str(item.get(k, '')) for k in header))
+                          return '\n'.join(csv_lines)
+                  return "Cannot convert to CSV: data is not a list of objects"
+              elif output_format == "table":
+                  if isinstance(parsed_data, list) and len(parsed_data) > 0:
+                      if isinstance(parsed_data[0], dict):
+                          header = list(parsed_data[0].keys())
+                          table = f"| {' | '.join(header)} |\n"
+                          table += f"| {' | '.join(['---'] * len(header))} |\n"
+                          for item in parsed_data:
+                              row = ' | '.join(str(item.get(k, '')) for k in header)
+                              table += f"| {row} |\n"
+                          return table
+                  return "Cannot convert to table: data is not a list of objects"
+              else:
+                  return f"Unsupported output format: {output_format}"
+                  
+          except Exception as e:
+              return f"Error formatting data: {str(e)}"
+    function_name: "data_formatter"
+    parameters:
+      data:
+        type: "string"
+        description: "Input data to format"
+        required: true
+      input_format:
+        type: "string"
+        description: "Format of the input data"
+        required: true
+        enum: ["json", "yaml", "csv"]
+      output_format:
+        type: "string"
+        description: "Desired output format"
+        required: true
+        enum: ["json", "yaml", "csv", "table"]
+    allowed_imports: ["json", "yaml"]
+    version: "1.0.0"
+    author: "Riselogic AI"
+    tags: ["data", "format", "convert", "json", "yaml", "csv"]
+
+  web_search:
+    description: "Search the web using Google Search via LiteLLM"
+    type: "custom"
+    function_code: |
+      def web_search(query):
+          """
+          Search the web using Google Search via LiteLLM
+          
+          Args:
+              query (str): The search query
+          
+          Returns:
+              dict: Search results with query, content, and grounding metadata
+          """
+          try:
+              # Import required modules
+              import os
+              import json
+              
+              # Check if GEMINI_API_KEY is available
+              if not os.getenv("GEMINI_API_KEY"):
+                  return {
+                      "error": "GEMINI_API_KEY environment variable not set",
+                      "query": query,
+                      "results": None,
+                      "grounding_metadata": None,
+                      "success": False
+                  }
+              
+              # Try to import litellm
+              try:
+                  from litellm import completion
+              except Exception as import_error:
+                  return {
+                      "error": f"LiteLLM module not available: {str(import_error)}",
+                      "query": query,
+                      "results": None,
+                      "grounding_metadata": None,
+                      "success": False
+                  }
+              
+              # Configure Google Search tool
+              tools = [{"googleSearch": {}}]
+              
+              # Make the completion request with web search
+              response = completion(
+                  model="gemini/gemini-2.0-flash",
+                  messages=[{"role": "user", "content": f"Search for: {query}"}],
+                  tools=tools,
+                  timeout=30  # Add timeout for web requests
+              )
+              
+              # Extract response content
+              if response and response.choices and len(response.choices) > 0:
+                  content = response.choices[0].message.content
+                  
+                  # Extract grounding metadata if available
+                  grounding_metadata = None
+                  if hasattr(response, 'model_extra') and response.model_extra:
+                      grounding_metadata = response.model_extra.get('groundingMetadata')
+                  
+                  return {
+                      "query": query,
+                      "results": content,
+                      "grounding_metadata": grounding_metadata,
+                      "success": True
+                  }
+              else:
+                  return {
+                      "error": "No response received from search service",
+                      "query": query,
+                      "results": None,
+                      "grounding_metadata": None,
+                      "success": False
+                  }
+                  
+          except Exception as e:
+              return {
+                  "error": f"Web search failed: {str(e)}",
+                  "query": query,
+                  "results": None,
+                  "grounding_metadata": None,
+                  "success": False
+              }
+    function_name: "web_search"
+    parameters:
+      query:
+        type: "string"
+        description: "The search query to execute"
+        required: true
+    allowed_imports: ["litellm", "os", "json"]
+    version: "1.0.0"
+    author: "Riselogic AI"
+    tags: ["web", "search", "google", "internet", "information"]

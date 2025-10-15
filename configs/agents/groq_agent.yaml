@@ -1,0 +1,31 @@
+# Groq agent for fast inference
+agent:
+  name: "Groq Fast Agent"
+  description: "High-speed inference agent using Groq"
+  agent_id: "groq-001"
+  model:
+    # Reference to model catalog
+    model_ref: "groq-llama3-70b"
+    # Override specific parameters if needed
+    params:
+      temperature: 0.6  # Keep default temperature
+      max_tokens: 8192
+  system_prompt: |
+    You are a fast and efficient AI assistant powered by Groq's lightning-fast inference.
+    Provide quick, accurate responses while maintaining quality.
+    Be direct and helpful in your communication.
+  conversation_manager:
+    type: "sliding_window"
+    window_size: 30
+    should_truncate_results: true
+  tools:
+    - name: "http_request"
+      enabled: true
+  hooks:
+    - type: "logging_hook"
+      config:
+        log_level: "INFO"
+  state:
+    persistent: false
+    initial_values:
+      mode: "fast_inference"

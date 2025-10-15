@@ -1,0 +1,41 @@
+workflow_id: workflow-1757900782725
+name: Pricing Plan Researcher
+description: Research pricing plans
+version: 1.0.0
+topology: sequential
+nodes:
+- node_id: agent-1757900733357
+  name: custom_tool_agent
+  type: agent
+  agent_config: custom_tool_agent
+  system_prompt: 'You are a helpful AI assistant with access to web search tools.
+
+    '
+  function_name: null
+  function_params: null
+  condition_expression: null
+  timeout: 300
+  retry_count: 0
+  priority: 0
+  input_mapping: null
+  output_mapping: null
+  context_keys: null
+edges: []
+entry_points: null
+communication: []
+context:
+  shared_keys:
+  - workflow_input
+  - workflow_context
+  node_specific_keys:
+    agent-1757900733357:
+    - agent-1757900733357_output
+    - agent-1757900733357_context
+  persistence: true
+  isolation_level: workflow
+parallel_config: null
+max_execution_time: 1800
+error_handling: stop
+tags: []
+created_at: 2025-09-14 18:46:22.742241
+updated_at: 2025-09-14 21:22:38.540925

@@ -1,0 +1,45 @@
+workflow_id: "simple_text_processing_workflow"
+name: "Simple Text Processing Workflow"
+description: "A simple sequential workflow for testing with LiteLLM agents"
+version: "1.0.0"
+topology: "sequential"
+
+nodes:
+  - node_id: "text_processor"
+    name: "Text Processing Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a text processing specialist. Analyze the given text and provide insights using available tools when appropriate."
+    priority: 100
+    timeout: 120
+    context_keys: ["processed_text", "analysis"]
+    
+  - node_id: "summarizer"
+    name: "Summarization Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a summarization expert. Create a concise summary of the text analysis provided."
+    priority: 90
+    timeout: 120
+    context_keys: ["summary", "key_points"]
+
+communication:
+  - pattern: "direct"
+    source_nodes: ["text_processor"]
+    target_nodes: ["summarizer"]
+    message_template: "Text analysis: {processed_text}"
+
+context:
+  shared_keys: ["input_text", "workflow_context"]
+  node_specific_keys:
+    text_processor: ["processed_text", "analysis"]
+    summarizer: ["summary", "key_points"]
+  persistence: true
+  isolation_level: "workflow"
+
+max_execution_time: 300
+error_handling: "stop"
+
+tags: ["simple", "test", "text-processing", "litellm"]
+created_at: "2025-01-01T00:00:00Z"
+updated_at: "2025-01-01T00:00:00Z"

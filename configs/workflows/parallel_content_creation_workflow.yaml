@@ -1,0 +1,129 @@
+workflow_id: "parallel_content_creation_workflow"
+name: "Parallel Content Creation Workflow"
+description: "A parallel workflow for simultaneous content creation across multiple channels"
+version: "1.0.0"
+topology: "parallel"
+
+nodes:
+  - node_id: "coordinator"
+    name: "Content Coordinator"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a content coordination specialist. Break down the content requirements and provide guidance for parallel content creation."
+    priority: 100
+    timeout: 120
+    context_keys: ["content_strategy", "requirements"]
+    
+  - node_id: "blog_writer"
+    name: "Blog Content Writer"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a blog writing specialist. Create engaging blog content based on the content strategy."
+    priority: 90
+    timeout: 300
+    context_keys: ["blog_content"]
+    
+  - node_id: "social_media_creator"
+    name: "Social Media Content Creator"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a social media content specialist. Create compelling social media posts and campaigns."
+    priority: 90
+    timeout: 240
+    context_keys: ["social_content"]
+    
+  - node_id: "email_marketer"
+    name: "Email Marketing Specialist"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are an email marketing expert. Create effective email campaigns and newsletters."
+    priority: 90
+    timeout: 240
+    context_keys: ["email_content"]
+    
+  - node_id: "web_researcher"
+    name: "Web Research Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a web research specialist. Gather current trends and competitive intelligence using web search."
+    priority: 90
+    timeout: 180
+    context_keys: ["research_data", "trends"]
+    
+  - node_id: "content_aggregator"
+    name: "Content Aggregation Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a content aggregation specialist. Combine and harmonize all content pieces into a cohesive campaign."
+    priority: 80
+    timeout: 300
+    context_keys: ["final_campaign", "content_summary"]
+
+edges:
+  - from_node: "coordinator"
+    to_node: "blog_writer"
+    communication_pattern: "broadcast"
+    
+  - from_node: "coordinator"
+    to_node: "social_media_creator"
+    communication_pattern: "broadcast"
+    
+  - from_node: "coordinator"
+    to_node: "email_marketer"
+    communication_pattern: "broadcast"
+    
+  - from_node: "coordinator"
+    to_node: "web_researcher"
+    communication_pattern: "broadcast"
+    
+  - from_node: "blog_writer"
+    to_node: "content_aggregator"
+    communication_pattern: "aggregation"
+    
+  - from_node: "social_media_creator"
+    to_node: "content_aggregator"
+    communication_pattern: "aggregation"
+    
+  - from_node: "email_marketer"
+    to_node: "content_aggregator"
+    communication_pattern: "aggregation"
+    
+  - from_node: "web_researcher"
+    to_node: "content_aggregator"
+    communication_pattern: "aggregation"
+
+communication:
+  - pattern: "broadcast"
+    source_nodes: ["coordinator"]
+    target_nodes: ["blog_writer", "social_media_creator", "email_marketer", "web_researcher"]
+    message_template: "Content strategy: {content_strategy}. Requirements: {requirements}"
+    
+  - pattern: "aggregation"
+    source_nodes: ["blog_writer", "social_media_creator", "email_marketer", "web_researcher"]
+    target_nodes: ["content_aggregator"]
+    message_template: "Content contribution: {node_output}"
+
+context:
+  shared_keys: ["campaign_topic", "target_audience", "brand_guidelines", "content_strategy"]
+  node_specific_keys:
+    coordinator: ["content_strategy", "requirements"]
+    blog_writer: ["blog_content"]
+    social_media_creator: ["social_content"]
+    email_marketer: ["email_content"]
+    web_researcher: ["research_data", "trends"]
+    content_aggregator: ["final_campaign", "content_summary"]
+  persistence: true
+  isolation_level: "workflow"
+
+parallel_config:
+  max_concurrent_nodes: 4
+  batch_size: 4
+  aggregation_strategy: "wait_all"
+  aggregation_timeout: 600
+
+max_execution_time: 2400
+error_handling: "continue"
+
+tags: ["content", "parallel", "marketing", "multi-channel"]
+created_at: "2025-01-01T00:00:00Z"
+updated_at: "2025-01-01T00:00:00Z"

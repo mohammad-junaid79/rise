@@ -1,0 +1,40 @@
+workflow_id: test-workflow-456
+name: Test Workflow 2
+description: Testing workflow with agent creation
+version: 1.0.0
+topology: sequential
+nodes:
+- node_id: poet-agent-456
+  name: Poet Agent
+  type: agent
+  agent_config: null
+  system_prompt: You are a creative poet who writes beautiful poems
+  function_name: null
+  function_params: null
+  condition_expression: null
+  timeout: 300
+  retry_count: 0
+  priority: 0
+  input_mapping: null
+  output_mapping: null
+  context_keys: null
+edges: []
+entry_points: null
+communication: []
+context:
+  shared_keys:
+  - workflow_input
+  - workflow_context
+  node_specific_keys:
+    poet-agent-456:
+    - poet-agent-456_output
+    - poet-agent-456_context
+  persistence: true
+  isolation_level: workflow
+parallel_config: null
+max_execution_time: 1800
+error_handling: stop
+tags:
+- test
+created_at: 2025-09-13 22:18:06.516746
+updated_at: 2025-09-13 22:18:06.516779

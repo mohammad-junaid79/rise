@@ -1,0 +1,35 @@
+# Claude agent with Anthropic via LiteLLM
+agent:
+  name: "Claude Agent"
+  description: "Advanced reasoning agent using Anthropic Claude"
+  agent_id: "claude-001"
+  model:
+    # Reference to model catalog
+    model_ref: "claude-sonnet-4"
+    # Override specific parameters if needed
+    params:
+      temperature: 0.3  # Override default temperature
+      max_tokens: 4096
+  system_prompt: |
+    You are Claude, an AI assistant created by Anthropic. You are helpful, harmless, and honest.
+    You excel at reasoning, analysis, and providing detailed explanations.
+    Always think step by step and provide clear, well-structured responses.
+  conversation_manager:
+    type: "sliding_window"
+    window_size: 50
+    should_truncate_results: true
+  tools:
+    - name: "calculator"
+      enabled: true
+      type: "built-in"
+    - name: "current_time"
+      enabled: true
+      type: "built-in"
+  hooks:
+    - type: "logging_hook"
+      config:
+        log_level: "INFO"
+  state:
+    persistent: true
+    initial_values:
+      reasoning_mode: "analytical"

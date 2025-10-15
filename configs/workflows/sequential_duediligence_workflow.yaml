@@ -1,0 +1,60 @@
+workflow_id: "sequential_duediligence_workflow"
+name: "Due Diligence Research and Investor Report Workflow"
+description: "A sequential workflow for generating a report for investors on due diligence to understand the previous funding rounds, traction in the market and competitive intelligence by searching the web or querying public databases and gathering news from various sources"
+version: "1.0.0"
+topology: "sequential"
+
+nodes:
+  - node_id: "database_agent"
+    name: "Database Query Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a database specialist with expertise in SQL, NoSQL, and graph databases. Analyze the input query to identify the appropriate database type and connection method. Execute queries and retrieve data in structured formats (tables, lists of dictionaries, or JSON)."
+    priority: 100
+    timeout: 300
+    context_keys: ["database_results", "query_metadata", "data_format"]
+
+  - node_id: "investor_assistant"
+    name: "Investor Assistant Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are an assistant for investors and a due diligence research report specialist. Given a company name or identifier or a set of database results,  search the web for relevant funding information, investment news, venture capital activities, and financial updates. Gather comprehensive funding-related data from various sources and maintain proper source references."
+    priority: 90
+    timeout: 240
+    context_keys: ["funding_results", "news_sources", "funding_insights"]
+    
+  - node_id: "report_generator"
+    name: "Report Generation Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a report writing expert specializing in funding and financial analysis. Create a comprehensive summary of the funding research results, organize the information logically, and provide a complete list of references and sources used."
+    priority: 80
+    timeout: 200
+    context_keys: ["funding_report", "executive_summary", "source_references"]
+
+communication:
+  - pattern: "direct"
+    source_nodes: ["database_agent"]
+    target_nodes: ["investor_assistant"]
+    message_template: "Database results: {database_results}, Data format: {data_format}"
+    
+  - pattern: "direct"
+    source_nodes: ["investor_assistant"]
+    target_nodes: ["report_generator"]
+    message_template: "Funding research results: {funding_results}, Sources: {news_sources}"
+
+context:
+  shared_keys: ["input_query", "search_criteria", "workflow_context"]
+  node_specific_keys:
+    database_agent: ["database_results", "query_metadata", "data_format"]
+    investor_assistant: ["funding_results", "news_sources", "funding_insights"]
+    report_generator: ["funding_report", "executive_summary", "source_references"]
+  persistence: true
+  isolation_level: "workflow"
+
+max_execution_time: 1200
+error_handling: "stop"
+
+tags: ["database", "funding", "research", "sequential", "financial"]
+created_at: "2025-09-12T00:00:00Z"
+updated_at: "2025-09-12T00:00:00Z"

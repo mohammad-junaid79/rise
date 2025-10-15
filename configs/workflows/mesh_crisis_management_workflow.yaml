@@ -1,0 +1,261 @@
+workflow_id: "mesh_crisis_management_workflow"
+name: "Mesh Crisis Management Workflow"
+description: "A mesh topology workflow for crisis management with full interconnectivity and emergency response coordination"
+version: "1.0.0"
+topology: "mesh"
+
+nodes:
+  - node_id: "crisis_coordinator"
+    name: "Crisis Coordination Center"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are the crisis coordination center. Monitor all crisis aspects, coordinate responses, and maintain situational awareness. You can communicate with all other agents in the mesh network."
+    priority: 100
+    timeout: 180
+    context_keys: ["crisis_status", "coordination_decisions", "overall_situation"]
+    
+  - node_id: "intelligence_analyst"
+    name: "Intelligence Analysis Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are an intelligence analyst. Gather real-time information using web search, analyze threats, and provide intelligence updates to all relevant agents in the network."
+    priority: 95
+    timeout: 120
+    context_keys: ["intelligence_reports", "threat_analysis", "real_time_data"]
+    
+  - node_id: "communications_manager"
+    name: "Communications Manager"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are the communications manager. Handle internal and external communications, manage public relations, and coordinate messaging across all crisis response teams."
+    priority: 90
+    timeout: 120
+    context_keys: ["public_messages", "internal_comms", "media_response"]
+    
+  - node_id: "resource_manager"
+    name: "Resource Management Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are the resource manager. Track available resources, allocate personnel and equipment, and coordinate with all other agents for resource optimization."
+    priority: 90
+    timeout: 150
+    context_keys: ["resource_inventory", "allocation_plans", "resource_requests"]
+    
+  - node_id: "medical_coordinator"
+    name: "Medical Response Coordinator"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are the medical response coordinator. Manage medical response efforts, coordinate with healthcare facilities, and communicate medical needs across the network."
+    priority: 95
+    timeout: 120
+    context_keys: ["medical_status", "healthcare_coordination", "medical_resources"]
+    
+  - node_id: "security_manager"
+    name: "Security Management Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are the security manager. Ensure security protocols, manage access control, and coordinate security measures with all crisis response agents."
+    priority: 90
+    timeout: 120
+    context_keys: ["security_status", "access_control", "security_measures"]
+    
+  - node_id: "logistics_coordinator"
+    name: "Logistics Coordination Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are the logistics coordinator. Manage supply chains, coordinate transportation, and ensure logistical support for all crisis response activities."
+    priority: 85
+    timeout: 150
+    context_keys: ["logistics_plans", "supply_status", "transportation_coordination"]
+
+# Mesh topology - every node can communicate with every other node
+edges:
+  # Crisis Coordinator to all others
+  - from_node: "crisis_coordinator"
+    to_node: "intelligence_analyst"
+    communication_pattern: "broadcast"
+  - from_node: "crisis_coordinator"
+    to_node: "communications_manager"
+    communication_pattern: "broadcast"
+  - from_node: "crisis_coordinator"
+    to_node: "resource_manager"
+    communication_pattern: "broadcast"
+  - from_node: "crisis_coordinator"
+    to_node: "medical_coordinator"
+    communication_pattern: "broadcast"
+  - from_node: "crisis_coordinator"
+    to_node: "security_manager"
+    communication_pattern: "broadcast"
+  - from_node: "crisis_coordinator"
+    to_node: "logistics_coordinator"
+    communication_pattern: "broadcast"
+    
+  # Intelligence Analyst to all others
+  - from_node: "intelligence_analyst"
+    to_node: "crisis_coordinator"
+    communication_pattern: "direct"
+  - from_node: "intelligence_analyst"
+    to_node: "communications_manager"
+    communication_pattern: "direct"
+  - from_node: "intelligence_analyst"
+    to_node: "resource_manager"
+    communication_pattern: "direct"
+  - from_node: "intelligence_analyst"
+    to_node: "medical_coordinator"
+    communication_pattern: "direct"
+  - from_node: "intelligence_analyst"
+    to_node: "security_manager"
+    communication_pattern: "direct"
+  - from_node: "intelligence_analyst"
+    to_node: "logistics_coordinator"
+    communication_pattern: "direct"
+    
+  # Communications Manager to all others
+  - from_node: "communications_manager"
+    to_node: "crisis_coordinator"
+    communication_pattern: "direct"
+  - from_node: "communications_manager"
+    to_node: "intelligence_analyst"
+    communication_pattern: "direct"
+  - from_node: "communications_manager"
+    to_node: "resource_manager"
+    communication_pattern: "direct"
+  - from_node: "communications_manager"
+    to_node: "medical_coordinator"
+    communication_pattern: "direct"
+  - from_node: "communications_manager"
+    to_node: "security_manager"
+    communication_pattern: "direct"
+  - from_node: "communications_manager"
+    to_node: "logistics_coordinator"
+    communication_pattern: "direct"
+    
+  # Resource Manager to all others
+  - from_node: "resource_manager"
+    to_node: "crisis_coordinator"
+    communication_pattern: "direct"
+  - from_node: "resource_manager"
+    to_node: "intelligence_analyst"
+    communication_pattern: "direct"
+  - from_node: "resource_manager"
+    to_node: "communications_manager"
+    communication_pattern: "direct"
+  - from_node: "resource_manager"
+    to_node: "medical_coordinator"
+    communication_pattern: "direct"
+  - from_node: "resource_manager"
+    to_node: "security_manager"
+    communication_pattern: "direct"
+  - from_node: "resource_manager"
+    to_node: "logistics_coordinator"
+    communication_pattern: "direct"
+    
+  # Medical Coordinator to all others
+  - from_node: "medical_coordinator"
+    to_node: "crisis_coordinator"
+    communication_pattern: "direct"
+  - from_node: "medical_coordinator"
+    to_node: "intelligence_analyst"
+    communication_pattern: "direct"
+  - from_node: "medical_coordinator"
+    to_node: "communications_manager"
+    communication_pattern: "direct"
+  - from_node: "medical_coordinator"
+    to_node: "resource_manager"
+    communication_pattern: "direct"
+  - from_node: "medical_coordinator"
+    to_node: "security_manager"
+    communication_pattern: "direct"
+  - from_node: "medical_coordinator"
+    to_node: "logistics_coordinator"
+    communication_pattern: "direct"
+    
+  # Security Manager to all others
+  - from_node: "security_manager"
+    to_node: "crisis_coordinator"
+    communication_pattern: "direct"
+  - from_node: "security_manager"
+    to_node: "intelligence_analyst"
+    communication_pattern: "direct"
+  - from_node: "security_manager"
+    to_node: "communications_manager"
+    communication_pattern: "direct"
+  - from_node: "security_manager"
+    to_node: "resource_manager"
+    communication_pattern: "direct"
+  - from_node: "security_manager"
+    to_node: "medical_coordinator"
+    communication_pattern: "direct"
+  - from_node: "security_manager"
+    to_node: "logistics_coordinator"
+    communication_pattern: "direct"
+    
+  # Logistics Coordinator to all others
+  - from_node: "logistics_coordinator"
+    to_node: "crisis_coordinator"
+    communication_pattern: "direct"
+  - from_node: "logistics_coordinator"
+    to_node: "intelligence_analyst"
+    communication_pattern: "direct"
+  - from_node: "logistics_coordinator"
+    to_node: "communications_manager"
+    communication_pattern: "direct"
+  - from_node: "logistics_coordinator"
+    to_node: "resource_manager"
+    communication_pattern: "direct"
+  - from_node: "logistics_coordinator"
+    to_node: "medical_coordinator"
+    communication_pattern: "direct"
+  - from_node: "logistics_coordinator"
+    to_node: "security_manager"
+    communication_pattern: "direct"
+
+communication:
+  - pattern: "broadcast"
+    source_nodes: ["crisis_coordinator"]
+    target_nodes: ["intelligence_analyst", "communications_manager", "resource_manager", "medical_coordinator", "security_manager", "logistics_coordinator"]
+    message_template: "Crisis status update: {crisis_status}. Coordination decisions: {coordination_decisions}"
+    
+  - pattern: "broadcast"
+    source_nodes: ["intelligence_analyst"]
+    target_nodes: ["crisis_coordinator", "communications_manager", "resource_manager", "medical_coordinator", "security_manager", "logistics_coordinator"]
+    message_template: "Intelligence update: {intelligence_reports}. Threat analysis: {threat_analysis}"
+    
+  - pattern: "conditional"
+    source_nodes: ["medical_coordinator"]
+    target_nodes: ["resource_manager", "logistics_coordinator"]
+    condition: "medical_emergency == true"
+    message_template: "URGENT: Medical emergency requiring immediate resource allocation: {medical_status}"
+    
+  - pattern: "conditional"
+    source_nodes: ["security_manager"]
+    target_nodes: ["crisis_coordinator", "communications_manager"]
+    condition: "security_threat_level > 3"
+    message_template: "ALERT: High security threat detected: {security_status}"
+
+context:
+  shared_keys: ["crisis_type", "crisis_severity", "timeline", "affected_areas", "overall_status"]
+  node_specific_keys:
+    crisis_coordinator: ["crisis_status", "coordination_decisions", "overall_situation"]
+    intelligence_analyst: ["intelligence_reports", "threat_analysis", "real_time_data"]
+    communications_manager: ["public_messages", "internal_comms", "media_response"]
+    resource_manager: ["resource_inventory", "allocation_plans", "resource_requests"]
+    medical_coordinator: ["medical_status", "healthcare_coordination", "medical_resources"]
+    security_manager: ["security_status", "access_control", "security_measures"]
+    logistics_coordinator: ["logistics_plans", "supply_status", "transportation_coordination"]
+  persistence: true
+  isolation_level: "none"  # Full information sharing in crisis
+
+# Mesh-specific configuration
+mesh_config:
+  full_connectivity: true
+  real_time_sync: true
+  priority_escalation: true
+  emergency_channels: ["medical_coordinator", "security_manager", "crisis_coordinator"]
+
+max_execution_time: 1200  # Crisis response needs to be fast
+error_handling: "continue"  # Don't stop on individual agent failures
+
+tags: ["crisis-management", "mesh", "emergency-response", "real-time"]
+created_at: "2025-01-01T00:00:00Z"
+updated_at: "2025-01-01T00:00:00Z"

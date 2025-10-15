@@ -1,0 +1,246 @@
+# Model Catalog
+# Centralized repository of model configurations for agents
+
+models:
+  # Anthropic Models via LiteLLM
+  claude-sonnet-4:
+    provider: "litellm"
+    model_id: "anthropic/claude-sonnet-4-20250514"
+    display_name: "Claude 3.5 Sonnet"
+    description: "Latest Claude model with advanced reasoning capabilities"
+    max_tokens: 4096
+    context_window: 200000
+    pricing:
+      input_tokens_per_million: 3.0
+      output_tokens_per_million: 15.0
+    capabilities:
+      - "reasoning"
+      - "analysis"
+      - "coding"
+      - "writing"
+    client_args:
+      api_key: "${ANTHROPIC_API_KEY}"
+    default_params:
+      temperature: 0.3
+      max_tokens: 4096
+      top_p: 0.9
+
+  claude-haiku:
+    provider: "litellm"
+    model_id: "anthropic/claude-3-haiku-20240307"
+    display_name: "Claude 3 Haiku"
+    description: "Fast and efficient Claude model for quick tasks"
+    max_tokens: 4000
+    context_window: 200000
+    pricing:
+      input_tokens_per_million: 0.25
+      output_tokens_per_million: 1.25
+    capabilities:
+      - "quick-responses"
+      - "text-processing"
+      - "analysis"
+    client_args:
+      api_key: "${ANTHROPIC_API_KEY}"
+    default_params:
+      temperature: 0.7
+      max_tokens: 4000
+      top_p: 0.9
+
+  # OpenAI Models via LiteLLM
+  gpt-4:
+    provider: "litellm"
+    model_id: "openai/gpt-4"
+    display_name: "GPT-4"
+    description: "OpenAI's most capable model for complex reasoning"
+    max_tokens: 4096
+    context_window: 8192
+    pricing:
+      input_tokens_per_million: 30.0
+      output_tokens_per_million: 60.0
+    capabilities:
+      - "reasoning"
+      - "analysis"
+      - "coding"
+      - "creative-writing"
+    client_args:
+      api_key: "${OPENAI_API_KEY}"
+    default_params:
+      temperature: 0.5
+      max_tokens: 2048
+      top_p: 1.0
+
+  gpt-4-turbo:
+    provider: "litellm"
+    model_id: "openai/gpt-4-turbo"
+    display_name: "GPT-4 Turbo"
+    description: "Faster and more cost-effective GPT-4 variant"
+    max_tokens: 4096
+    context_window: 128000
+    pricing:
+      input_tokens_per_million: 10.0
+      output_tokens_per_million: 30.0
+    capabilities:
+      - "reasoning"
+      - "analysis"
+      - "coding"
+      - "long-context"
+    client_args:
+      api_key: "${OPENAI_API_KEY}"
+    default_params:
+      temperature: 0.7
+      max_tokens: 4096
+      top_p: 1.0
+
+  gpt-3.5-turbo:
+    provider: "litellm"
+    model_id: "openai/gpt-3.5-turbo"
+    display_name: "GPT-3.5 Turbo"
+    description: "Fast and cost-effective model for general tasks"
+    max_tokens: 4096
+    context_window: 16384
+    pricing:
+      input_tokens_per_million: 0.5
+      output_tokens_per_million: 1.5
+    capabilities:
+      - "general-purpose"
+      - "text-processing"
+      - "coding"
+    client_args:
+      api_key: "${OPENAI_API_KEY}"
+    default_params:
+      temperature: 0.7
+      max_tokens: 2048
+      top_p: 1.0
+
+  # Google Models via LiteLLM
+  gemini-pro:
+    provider: "litellm"
+    model_id: "gemini/gemini-1.5-pro"
+    display_name: "Gemini 1.5 Pro"
+    description: "Google's advanced multimodal model"
+    max_tokens: 4096
+    context_window: 1000000
+    pricing:
+      input_tokens_per_million: 7.0
+      output_tokens_per_million: 21.0
+    capabilities:
+      - "multimodal"
+      - "reasoning"
+      - "long-context"
+      - "analysis"
+    client_args:
+      api_key: "${GOOGLE_API_KEY}"
+    default_params:
+      temperature: 0.7
+      max_tokens: 4096
+      top_p: 0.95
+
+  # Groq Models (High-speed inference)
+  groq-llama3-70b:
+    provider: "litellm"
+    model_id: "groq/llama3-70b-8192"
+    display_name: "Llama 3 70B (Groq)"
+    description: "High-speed inference with Groq's optimized hardware"
+    max_tokens: 8192
+    context_window: 8192
+    pricing:
+      input_tokens_per_million: 0.59
+      output_tokens_per_million: 0.79
+    capabilities:
+      - "high-speed"
+      - "reasoning"
+      - "coding"
+    client_args:
+      api_key: "${GROQ_API_KEY}"
+    default_params:
+      temperature: 0.6
+      max_tokens: 8192
+      top_p: 1.0
+
+  groq-mixtral-8x7b:
+    provider: "litellm"
+    model_id: "groq/mixtral-8x7b-32768"
+    display_name: "Mixtral 8x7B (Groq)"
+    description: "Mixture of experts model with high-speed inference"
+    max_tokens: 32768
+    context_window: 32768
+    pricing:
+      input_tokens_per_million: 0.27
+      output_tokens_per_million: 0.27
+    capabilities:
+      - "high-speed"
+      - "long-context"
+      - "reasoning"
+    client_args:
+      api_key: "${GROQ_API_KEY}"
+    default_params:
+      temperature: 0.5
+      max_tokens: 4096
+      top_p: 1.0
+
+  # Local/Ollama Models
+  ollama-llama3:
+    provider: "ollama"
+    model_id: "llama3:latest"
+    display_name: "Llama 3 (Local)"
+    description: "Local Llama 3 model via Ollama"
+    max_tokens: 4096
+    context_window: 8192
+    pricing:
+      input_tokens_per_million: 0.0
+      output_tokens_per_million: 0.0
+    capabilities:
+      - "local"
+      - "privacy"
+      - "reasoning"
+    client_args:
+      base_url: "http://localhost:11434"
+    default_params:
+      temperature: 0.7
+      max_tokens: 4096
+
+# Model categories for easier selection
+categories:
+  high_performance:
+    - "claude-sonnet-4"
+    - "gpt-4"
+    - "gemini-pro"
+  
+  cost_effective:
+    - "claude-haiku"
+    - "gpt-3.5-turbo"
+    - "groq-llama3-70b"
+  
+  high_speed:
+    - "groq-llama3-70b"
+    - "groq-mixtral-8x7b"
+  
+  long_context:
+    - "gemini-pro"
+    - "gpt-4-turbo"
+    - "groq-mixtral-8x7b"
+  
+  local:
+    - "ollama-llama3"
+
+# Default model preferences by use case
+use_cases:
+  research:
+    primary: "claude-sonnet-4"
+    fallback: "gpt-4"
+  
+  data_analysis:
+    primary: "claude-sonnet-4"
+    fallback: "gemini-pro"
+  
+  text_processing:
+    primary: "claude-haiku"
+    fallback: "gpt-3.5-turbo"
+  
+  coding:
+    primary: "claude-sonnet-4"
+    fallback: "gpt-4"
+  
+  quick_tasks:
+    primary: "groq-llama3-70b"
+    fallback: "claude-haiku"

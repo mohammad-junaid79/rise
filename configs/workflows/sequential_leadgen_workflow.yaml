@@ -1,0 +1,75 @@
+workflow_id: "sequential_leadgen_workflow"
+name: "Lead Generation Workflow"
+description: "A sequential workflow for extracting search keywords from ideal customer profile, collect people information, data enrichment, and personalized message generation"
+version: "1.0.0"
+topology: "sequential"
+
+nodes:
+  - node_id: "keyword_extractor"
+    name: "Keyword Extraction Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a keyword extraction specialist. Analyze the input text and extract relevant keywords that can be used for database searches or API requests. Focus on identifying key data points, parameters, and searchable terms based on user requirements."
+    priority: 100
+    timeout: 180
+    context_keys: ["extracted_keywords", "search_parameters"]
+
+  - node_id: "data_collector"
+    name: "Data Collection Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a data collection specialist. Use the extracted keywords and search parameters to query databases and external APIs. Collect and organize the results into structured data tables."
+    priority: 90
+    timeout: 300
+    context_keys: ["collected_data", "data_sources", "result_table"]
+    
+  - node_id: "data_enricher"
+    name: "Data Enrichment Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a data enrichment specialist. Take the collected data and enhance it with additional information from third-party APIs, databases, or file sources. Merge and augment the existing data to create a comprehensive dataset."
+    priority: 80
+    timeout: 240
+    context_keys: ["enriched_data", "enrichment_sources", "final_dataset"]
+    
+  - node_id: "message_generator"
+    name: "Message Generation Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a personalized messaging expert. Analyze the enriched dataset, summarize key insights, and generate personalized messages suitable for email or messaging platforms. Tailor the content based on the data context and recipient requirements."
+    priority: 70
+    timeout: 200
+    context_keys: ["personalized_message", "message_summary", "delivery_format"]
+
+communication:
+  - pattern: "direct"
+    source_nodes: ["keyword_extractor"]
+    target_nodes: ["data_collector"]
+    message_template: "Extracted entities: {extracted_entities}, Search parameters: {search_parameters}"
+    
+  - pattern: "direct"
+    source_nodes: ["data_collector"]
+    target_nodes: ["data_enricher"]
+    message_template: "Collected data: {collected_data}, Result table: {result_table}"
+    
+  - pattern: "direct"
+    source_nodes: ["data_enricher"]
+    target_nodes: ["message_generator"]
+    message_template: "Enriched dataset: {enriched_data}, Final dataset: {final_dataset}"
+
+context:
+  shared_keys: ["input_text", "user_requirements", "workflow_context"]
+  node_specific_keys:
+    entity_extractor: ["extracted_entities", "search_parameters"]
+    data_collector: ["collected_data", "data_sources", "result_table"]
+    data_enricher: ["enriched_data", "enrichment_sources", "final_dataset"]
+    message_generator: ["personalized_message", "message_summary", "delivery_format"]
+  persistence: true
+  isolation_level: "workflow"
+
+max_execution_time: 1200
+error_handling: "stop"
+
+tags: ["data-processing", "enrichment", "messaging", "sequential", "automation"]
+created_at: "2025-09-12T00:00:00Z"
+updated_at: "2025-09-12T00:00:00Z"

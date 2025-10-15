@@ -1,0 +1,96 @@
+# Workflow routing tools for complex decision-making
+# Author: AI Assistant
+# Date: 2024
+
+custom_tools:
+  route_workflow:
+    name: "route_workflow"
+    description: "Route workflow execution based on conditional criteria"
+    type: "custom"
+    function_name: "route_workflow"
+    function_code: |
+      def route_workflow(context, criteria, route_options):
+          """
+          Route workflow execution based on conditional criteria
+          
+          Args:
+              context (dict): Current workflow context and state
+              criteria (dict): Decision criteria for routing
+              route_options (list): Available routing options
+              
+          Returns:
+              str: Selected route option
+          """
+          # Default routing logic
+          data_quality = context.get('data_quality', 0.5)
+          complexity = context.get('complexity', 'medium')
+          
+          if data_quality >= criteria.get('min_quality', 0.8):
+              return route_options[0] if route_options else 'comprehensive_analysis'
+          else:
+              return route_options[1] if len(route_options) > 1 else 'alternative_analysis'
+    
+    parameters:
+      context:
+        type: "object"
+        description: "Current workflow context and state"
+        required: true
+      criteria:
+        type: "object"
+        description: "Decision criteria for routing"
+        required: true
+      route_options:
+        type: "array"
+        description: "Available routing options"
+        required: true
+
+  validate_workflow_phase:
+    name: "validate_workflow_phase"
+    description: "Validate completion of a workflow phase"
+    type: "custom"
+    function_name: "validate_workflow_phase"
+    function_code: |
+      def validate_workflow_phase(phase_results, requirements):
+          """
+          Validate completion of a workflow phase
+          
+          Args:
+              phase_results (dict): Results from the completed phase
+              requirements (dict): Requirements for phase completion
+              
+          Returns:
+              dict: Validation results with status and details
+          """
+          validation = {
+              'status': 'valid',
+              'details': [],
+              'confidence': 1.0
+          }
+          
+          # Check required keys
+          required_keys = requirements.get('required_keys', [])
+          for key in required_keys:
+              if key not in phase_results:
+                  validation['status'] = 'invalid'
+                  validation['details'].append(f'Missing required key: {key}')
+                  validation['confidence'] *= 0.5
+          
+          # Check minimum data quality
+          min_quality = requirements.get('min_quality', 0.0)
+          actual_quality = phase_results.get('quality_score', 0.0)
+          if actual_quality < min_quality:
+              validation['status'] = 'insufficient'
+              validation['details'].append(f'Quality {actual_quality} below minimum {min_quality}')
+              validation['confidence'] *= 0.7
+          
+          return validation
+    
+    parameters:
+      phase_results:
+        type: "object"
+        description: "Results from the completed phase"
+        required: true
+      requirements:
+        type: "object"
+        description: "Requirements for phase completion"
+        required: true

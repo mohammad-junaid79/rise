@@ -1,0 +1,75 @@
+workflow_id: "sequential_research_workflow"
+name: "Sequential Research and Analysis Workflow"
+description: "A sequential workflow for research, analysis, fact-checking, and report generation"
+version: "1.0.0"
+topology: "sequential"
+
+nodes:
+  - node_id: "researcher"
+    name: "Research Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a research specialist. Find comprehensive information about the given topic using web search and provide detailed findings."
+    priority: 100
+    timeout: 300
+    context_keys: ["research_findings", "sources"]
+    
+  - node_id: "analyst" 
+    name: "Analysis Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a data analysis expert. Analyze the research findings and extract key insights, trends, and patterns."
+    priority: 90
+    timeout: 240
+    context_keys: ["analysis_results", "insights"]
+    
+  - node_id: "fact_checker"
+    name: "Fact Checking Agent"
+    type: "agent"
+    agent_config: "custom_tool_agent"
+    system_prompt: "You are a fact-checking specialist. Verify the accuracy of the research findings and analysis using web search."
+    priority: 80
+    timeout: 180
+    context_keys: ["fact_check_results", "verification_status"]
+    
+  - node_id: "report_writer"
+    name: "Report Writing Agent"
+    type: "agent"
+    agent_config: "claude_agent"
+    system_prompt: "You are a report writing expert. Create a comprehensive, well-structured report based on the research, analysis, and fact-checking results."
+    priority: 70
+    timeout: 300
+    context_keys: ["final_report"]
+
+communication:
+  - pattern: "direct"
+    source_nodes: ["researcher"]
+    target_nodes: ["analyst"]
+    message_template: "Research findings: {research_findings}"
+    
+  - pattern: "direct"
+    source_nodes: ["analyst"]
+    target_nodes: ["fact_checker"]
+    message_template: "Analysis results: {analysis_results}"
+    
+  - pattern: "direct"
+    source_nodes: ["fact_checker"]
+    target_nodes: ["report_writer"]
+    message_template: "Fact-checked findings: {fact_check_results}"
+
+context:
+  shared_keys: ["topic", "original_query", "workflow_context"]
+  node_specific_keys:
+    researcher: ["research_findings", "sources"]
+    analyst: ["analysis_results", "insights"]
+    fact_checker: ["fact_check_results", "verification_status"]
+    report_writer: ["final_report"]
+  persistence: true
+  isolation_level: "workflow"
+
+max_execution_time: 1800
+error_handling: "stop"
+
+tags: ["research", "analysis", "sequential", "comprehensive"]
+created_at: "2025-01-01T00:00:00Z"
+updated_at: "2025-01-01T00:00:00Z"

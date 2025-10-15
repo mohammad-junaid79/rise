@@ -1,0 +1,40 @@
+workflow_id: final-test-workflow
+name: Final Test Workflow
+description: Final test of workflow with agent creation
+version: 1.0.0
+topology: sequential
+nodes:
+- node_id: writer-agent-789
+  name: Writer Agent
+  type: agent
+  agent_config: writer_agent
+  system_prompt: You are a professional writer
+  function_name: null
+  function_params: null
+  condition_expression: null
+  timeout: 300
+  retry_count: 0
+  priority: 0
+  input_mapping: null
+  output_mapping: null
+  context_keys: null
+edges: []
+entry_points: null
+communication: []
+context:
+  shared_keys:
+  - workflow_input
+  - workflow_context
+  node_specific_keys:
+    writer-agent-789:
+    - writer-agent-789_output
+    - writer-agent-789_context
+  persistence: true
+  isolation_level: workflow
+parallel_config: null
+max_execution_time: 1800
+error_handling: stop
+tags:
+- final-test
+created_at: 2025-09-13 22:19:32.728164
+updated_at: 2025-09-13 22:19:32.728167

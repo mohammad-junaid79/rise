@@ -1,0 +1,38 @@
+custom_tools:
+  text_reverser:
+    name: "text_reverser"
+    description: "Reverses the order of characters in a text string"
+    function_code: |
+      def reverse_text(text):
+          """Reverse the order of characters in a text string."""
+          return text[::-1]
+    function_name: "reverse_text"
+    parameters:
+      text:
+        type: "string"
+        description: "The text to reverse"
+        required: true
+    allowed_imports: []
+    timeout: 10
+    async_execution: false
+    version: "1.0.0"
+    author: "Test Tool"
+    
+  word_counter:
+    name: "word_counter"
+    description: "Counts the number of words in a text string"
+    function_code: |
+      def count_words(text):
+          """Count the number of words in a text string."""
+          return len(text.split())
+    function_name: "count_words"
+    parameters:
+      text:
+        type: "string"
+        description: "The text to count words in"
+        required: true
+    allowed_imports: []
+    timeout: 10
+    async_execution: false
+    version: "1.0.0"
+    author: "Test Tool"
